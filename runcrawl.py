@@ -30,6 +30,7 @@ async def main():
 
         # Crawl details for each link and save to CSV
         for href in hrefs:
+            print(f"Crawling {href}")
             headers, rows = await crawl_detail(href)
             if headers and rows:
                 filename = f'Data/detail_data_{href.split('/')[-2]}.csv'
