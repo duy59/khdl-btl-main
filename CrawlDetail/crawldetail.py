@@ -9,7 +9,7 @@ async def crawl_detail(url):
     soup = BeautifulSoup(html_content, 'html.parser')
     
     # Find the table
-    table = soup.find('table', class_='table yf-1cqapi1')
+    table = soup.find('table', class_='table yf-kbx2lo')
     
     if table is None:
         print(f"No table found at {url}")

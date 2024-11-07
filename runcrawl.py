@@ -13,21 +13,33 @@ async def main():
     soup = BeautifulSoup(html_content, 'html.parser')
     
     # Find all <a> tags within the <tbody> with class "body yf-1dbt8wv"
-    tbody = soup.find('tbody', class_='body yf-1dbt8wv')
-    links = tbody.find_all('a', class_='loud-link fin-size-medium yf-1e4diqp')
-    
-    # Extract the href attribute from each <a> tag and convert to full URL with 'key-statistics' appended
-    hrefs = [urljoin(base_url, link.get('href') + 'key-statistics') for link in links]
-    
-    # Crawl details for each link and save to CSV
-    for href in hrefs:
-        headers, rows = await crawl_detail(href)
-        if headers and rows:
-            filename = f'Data/detail_data_{href.split("/")[-2]}.csv'
-            save_to_csv(headers, rows, filename)
-    
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+# Find the <tbody> with the specified class
+    tbody = soup.find('tbody', class_='body yf-paf8n5')
+    if tbody:
+        links = tbody.find_all('a', class_='loud-link fin-size-medium yf-1e4diqp')
+    else:
+        print("tbody not found")
+        links = []
+
+# Proceed only if links are found
+    if links:
+        # Extract hrefs and proceed
+        hrefs = [urljoin(base_url, link.get('href') + 'key-statistics') for link in links]
+
+        # Crawl details for each link and save to CSV
+        for href in hrefs:
+            headers, rows = await crawl_detail(href)
+            if headers and rows:
+                filename = f'Data/detail_data_{href.split('/')[-2]}.csv'
+                save_to_csv(headers, rows, filename)
+    else:
+        print("No links found to process.")
+
+        
     # Print Done after all crawling is complete
-    print("Done")
+    print("Done")        
 
 if __name__ == "__main__":
     asyncio.run(main())
