@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Price Predictor</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Stock Price Predictor</h1>
+        
+        <form id="predictionForm">
+            <div class="form-group">
+                <label>Price/Sales 9/30/2024:</label>
+                <input type="number" step="0.01" id="date1" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Price/Sales 6/30/2024:</label>
+                <input type="number" step="0.01" id="date2" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Price/Sales 3/31/2024:</label>
+                <input type="number" step="0.01" id="date3" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Price/Sales 12/31/2023:</label>
+                <input type="number" step="0.01" id="date4" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Price/Sales 9/30/2023:</label>
+                <input type="number" step="0.01" id="date5" required>
+            </div>
+            
+            <button type="submit">Predict</button>
+        </form>
+        
+        <div id="result" class="result" style="display: none;">
+            <h3>Prediction Result:</h3>
+            <p id="predictionValue"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const values = {
+                '9/30/2024': parseFloat(document.getElementById('date1').value),
+                '6/30/2024': parseFloat(document.getElementById('date2').value),
+                '3/31/2024': parseFloat(document.getElementById('date3').value),
+                '12/31/2023': parseFloat(document.getElementById('date4').value),
+                '9/30/2023': parseFloat(document.getElementById('date5').value)
+            };
+            
+            try {
+                const response = await fetch('http://localhost:8000/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ values })
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    document.getElementById('result').style.display = 'block';
+                    document.getElementById('predictionValue').textContent = 
+                        `Predicted Value: ${result.prediction.toFixed(2)}`;
+                } else {
+                    alert(`Error: ${result.message}`);
+                }
+            } catch (error) {
+                alert('Error making prediction: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html> 

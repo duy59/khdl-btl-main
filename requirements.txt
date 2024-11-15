@@ -1,3 +1,4 @@
 requests
 tenacity
 beautifulsoup4
+uvicorn api:app --reload
